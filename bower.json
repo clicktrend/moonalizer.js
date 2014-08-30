@@ -1,0 +1,31 @@
+{
+  "name": "moonalizer.js",
+  "version": "0.0.0",
+  "dependencies": {
+    "suncalc": "https://github.com/mourner/suncalc.git#moontimes",
+    "moment": "~2.7.0"
+  },
+  "authors": [
+    "Kadir Yuecel <ky@clicktrend.de>"
+  ],
+  "description": "Crescent visiblity calculator",
+  "main": "dist/moonalizer.js",
+  "keywords": [
+    "crescent",
+    "moon",
+    "islam",
+    "ramadan",
+    "moonsighting",
+    "hijric",
+    "calendar"
+  ],
+  "license": "MIT",
+  "homepage": "moonalizer.com",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
