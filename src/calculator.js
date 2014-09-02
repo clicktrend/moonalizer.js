@@ -22,7 +22,7 @@
  */
 function Calculator (date, criterion) {
 
-  this.date = moment.utc(date).toDate();
+  this.date = moment.utc(date).hour(12).toDate();
   this.criterion = criterion;
 
   this.calculate = function (lat, lon) {
