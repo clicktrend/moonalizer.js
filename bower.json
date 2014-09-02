@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "suncalc": "https://github.com/mourner/suncalc.git#moontimes",
-    "moment": "~2.7.0"
+    "moment": "~2.8.2"
   },
   "authors": [
     "Kadir Yuecel <ky@clicktrend.de>"
