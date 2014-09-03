@@ -71,7 +71,10 @@ Yallop.prototype.calculate = function (date, lat, lon) {
     date: date,
     code: code,
     sunset: data.sunset,
-    moonset: data.moonset
+    moonset: data.moonset,
+    daz: DAZ,
+    arcv: ARCV,
+    arcl: ARCL
   };
 
   return values;
