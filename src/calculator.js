@@ -20,12 +20,19 @@
  PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
  
  */
-function Calculator (date, criterion) {
+function Calculator (criterion) {
 
-  this.date = moment.utc(date).hour(12).toDate();
   this.criterion = criterion;
 
-  this.calculate = function (lat, lon) {
-    return this.criterion.calculate(this.date, lat, lon);
+  this.calculate = function (date, lat, lon) {
+    return this.criterion.calculate(moment.utc(date).hour(12).toDate(), lat, lon);
+  };
+  
+  this.getCriterion = function () {
+    return this.criterion;
+  };
+  
+  this.getAlgorithm = function () {
+    return this.criterion.getAlgorithm();
   };
 }

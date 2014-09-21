@@ -29,8 +29,14 @@ Criterion.prototype.init = function (algorithm) {
   this.algorithm = algorithm;
 };
 
+/*
 Criterion.prototype.setAlgorithm = function (algorithm) {
   this.algorithm = algorithm;
+};
+*/
+
+Criterion.prototype.getAlgorithm = function () {
+  return this.algorithm;
 };
 
 Criterion.prototype.getCode = function (values) {};

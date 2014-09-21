@@ -35,15 +35,15 @@ Yallop.prototype.calculate = function (date, lat, lon) {
   date = data.date;
   
   var sunPos = this.algorithm.getSunPosition(date, lat, lon);
-  var sunAzimuth = 180 + rad2deg(sunPos.azimuth);
-  var sunAltitude = rad2deg(sunPos.altitude);
+  //var sunAzimuth = 180 + rad2deg(sunPos.azimuth);
+  //var sunAltitude = rad2deg(sunPos.altitude);
 
   var moonPos = this.algorithm.getMoonPosition(date, lat, lon);
-  var moonAzimuth = 180 + rad2deg(moonPos.azimuth);
-  var moonAltitude = rad2deg(moonPos.altitude);
+  //var moonAzimuth = 180 + rad2deg(moonPos.azimuth);
+  //var moonAltitude = rad2deg(moonPos.altitude);
 
-  var DAZ = Math.abs(sunAzimuth - moonAzimuth);
-  var ARCV = Math.abs(moonAltitude - sunAltitude);
+  var DAZ = Math.abs(sunPos.azimuth - moonPos.azimuth);
+  var ARCV = Math.abs(moonPos.altitude - sunPos.altitude);
 
   var ARCL = 0;
   if (ARCV > 22) {
@@ -54,14 +54,7 @@ Yallop.prototype.calculate = function (date, lat, lon) {
   
   var illumination = 0.5 * (1 - Math.cos(ARCL));
   
-  //var RP = moonPos.distance / 6378.1370;
-  //var SD = 56204.92 / RP * (1 + (Math.sin(moonAltitude) / RP)) / 60;
-  //var W = deg2rad(SD) * (1 - Math.cos(ARCL));
-  
   var W = 11950 * illumination / moonPos.distance;
-  
-  //console.log(W)
-  //console.log(Width)
 
   var q = (ARCV - (11.8371 - (6.3226 * W) + (0.7319 * (W * W)) - (0.1018 * (W * W * W)))) / 10;
 
@@ -74,7 +67,11 @@ Yallop.prototype.calculate = function (date, lat, lon) {
     moonset: data.moonset,
     daz: DAZ,
     arcv: ARCV,
-    arcl: ARCL
+    arcl: ARCL,
+    moon_azimuth: moonPos.azimuth,
+    moon_altitude: moonPos.altitude,
+    sun_azimuth: sunPos.azimuth,
+    sun_altitude: sunPos.altitude
   };
 
   return values;

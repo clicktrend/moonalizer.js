@@ -38,10 +38,23 @@ SunCalcWrap.prototype.getMoonset = function (date, lat, lon) {
 };
 
 SunCalcWrap.prototype.getSunPosition = function (date, lat, lon) {
-  return this.model.getPosition(date, lat, lon);
+  var sunPos = this.model.getPosition(date, lat, lon);
+  return {
+    azimuth: 180 + rad2deg(sunPos.azimuth), 
+    altitude: rad2deg(sunPos.altitude)
+  };
 };
 SunCalcWrap.prototype.getMoonPosition = function (date, lat, lon) {
-  return this.model.getMoonPosition(date, lat, lon);
+  var moonPos = this.model.getMoonPosition(date, lat, lon);
+  return {
+    azimuth: 180 + rad2deg(moonPos.azimuth), 
+    altitude: rad2deg(moonPos.altitude),
+    distance: moonPos.distance
+  };
+};
+SunCalcWrap.prototype.getMoonPhase = function (date) {
+  var illumination = this.model.getMoonIllumination(date);
+  return illumination.phase;
 };
 
 SunCalcWrap.prototype.getBestTime = function (date, lat, lon) {

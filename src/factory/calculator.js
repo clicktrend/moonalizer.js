@@ -23,7 +23,7 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 
 
 var CalculatorFactory = {
-  create: function (date, criterion) {
-    return new Calculator(date, CriterionFactory.create(criterion));
+  create: function (criterion) {
+    return new Calculator(CriterionFactory.create(criterion));
   }
 };

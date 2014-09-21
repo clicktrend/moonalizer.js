@@ -21,7 +21,7 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 
 */ 
 
-function Plotter (calculator, coords, hooks) {
+function Plotter (calculator, date, coords, hooks) {
 
   this.counter = 0;
   this.operations = coords.length;
@@ -69,7 +69,7 @@ function Plotter (calculator, coords, hooks) {
 
         var latlon = coords[this.counter];
 
-        var c = calculator.calculate(latlon.lat, latlon.lon);
+        var c = calculator.calculate(date, latlon.lat, latlon.lon);
 
         if (typeof coords[this.counter - 1] !== 'undefined' && latlon.lat !== coords[this.counter - 1].lat) {
           hooks.jobLatitudeDone(this);

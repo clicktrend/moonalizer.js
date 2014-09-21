@@ -77,10 +77,23 @@ SunCalcWrap.prototype.getMoonset = function (date, lat, lon) {
 };
 
 SunCalcWrap.prototype.getSunPosition = function (date, lat, lon) {
-  return this.model.getPosition(date, lat, lon);
+  var sunPos = this.model.getPosition(date, lat, lon);
+  return {
+    azimuth: 180 + rad2deg(sunPos.azimuth), 
+    altitude: rad2deg(sunPos.altitude)
+  };
 };
 SunCalcWrap.prototype.getMoonPosition = function (date, lat, lon) {
-  return this.model.getMoonPosition(date, lat, lon);
+  var moonPos = this.model.getMoonPosition(date, lat, lon);
+  return {
+    azimuth: 180 + rad2deg(moonPos.azimuth), 
+    altitude: rad2deg(moonPos.altitude),
+    distance: moonPos.distance
+  };
+};
+SunCalcWrap.prototype.getMoonPhase = function (date) {
+  var illumination = this.model.getMoonIllumination(date);
+  return illumination.phase;
 };
 
 SunCalcWrap.prototype.getBestTime = function (date, lat, lon) {
@@ -136,13 +149,20 @@ SunCalcWrap.prototype.getBestTime = function (date, lat, lon) {
  PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
  
  */
-function Calculator (date, criterion) {
+function Calculator (criterion) {
 
-  this.date = moment.utc(date).hour(12).toDate();
   this.criterion = criterion;
 
-  this.calculate = function (lat, lon) {
-    return this.criterion.calculate(this.date, lat, lon);
+  this.calculate = function (date, lat, lon) {
+    return this.criterion.calculate(moment.utc(date).hour(12).toDate(), lat, lon);
+  };
+  
+  this.getCriterion = function () {
+    return this.criterion;
+  };
+  
+  this.getAlgorithm = function () {
+    return this.criterion.getAlgorithm();
   };
 };//--------------------- Copyright Block ----------------------
 /*
@@ -175,8 +195,14 @@ Criterion.prototype.init = function (algorithm) {
   this.algorithm = algorithm;
 };
 
+/*
 Criterion.prototype.setAlgorithm = function (algorithm) {
   this.algorithm = algorithm;
+};
+*/
+
+Criterion.prototype.getAlgorithm = function () {
+  return this.algorithm;
 };
 
 Criterion.prototype.getCode = function (values) {};
@@ -310,15 +336,15 @@ Yallop.prototype.calculate = function (date, lat, lon) {
   date = data.date;
   
   var sunPos = this.algorithm.getSunPosition(date, lat, lon);
-  var sunAzimuth = 180 + rad2deg(sunPos.azimuth);
-  var sunAltitude = rad2deg(sunPos.altitude);
+  //var sunAzimuth = 180 + rad2deg(sunPos.azimuth);
+  //var sunAltitude = rad2deg(sunPos.altitude);
 
   var moonPos = this.algorithm.getMoonPosition(date, lat, lon);
-  var moonAzimuth = 180 + rad2deg(moonPos.azimuth);
-  var moonAltitude = rad2deg(moonPos.altitude);
+  //var moonAzimuth = 180 + rad2deg(moonPos.azimuth);
+  //var moonAltitude = rad2deg(moonPos.altitude);
 
-  var DAZ = Math.abs(sunAzimuth - moonAzimuth);
-  var ARCV = Math.abs(moonAltitude - sunAltitude);
+  var DAZ = Math.abs(sunPos.azimuth - moonPos.azimuth);
+  var ARCV = Math.abs(moonPos.altitude - sunPos.altitude);
 
   var ARCL = 0;
   if (ARCV > 22) {
@@ -329,14 +355,7 @@ Yallop.prototype.calculate = function (date, lat, lon) {
   
   var illumination = 0.5 * (1 - Math.cos(ARCL));
   
-  //var RP = moonPos.distance / 6378.1370;
-  //var SD = 56204.92 / RP * (1 + (Math.sin(moonAltitude) / RP)) / 60;
-  //var W = deg2rad(SD) * (1 - Math.cos(ARCL));
-  
   var W = 11950 * illumination / moonPos.distance;
-  
-  //console.log(W)
-  //console.log(Width)
 
   var q = (ARCV - (11.8371 - (6.3226 * W) + (0.7319 * (W * W)) - (0.1018 * (W * W * W)))) / 10;
 
@@ -349,7 +368,11 @@ Yallop.prototype.calculate = function (date, lat, lon) {
     moonset: data.moonset,
     daz: DAZ,
     arcv: ARCV,
-    arcl: ARCL
+    arcl: ARCL,
+    moon_azimuth: moonPos.azimuth,
+    moon_altitude: moonPos.altitude,
+    sun_azimuth: sunPos.azimuth,
+    sun_altitude: sunPos.altitude
   };
 
   return values;
@@ -398,8 +421,8 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 
 
 var CalculatorFactory = {
-  create: function (date, criterion) {
-    return new Calculator(date, CriterionFactory.create(criterion));
+  create: function (criterion) {
+    return new Calculator(CriterionFactory.create(criterion));
   }
 };;//--------------------- Copyright Block ----------------------
 /*
@@ -473,7 +496,7 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 
 */ 
 
-function Plotter (calculator, coords, hooks) {
+function Plotter (calculator, date, coords, hooks) {
 
   this.counter = 0;
   this.operations = coords.length;
@@ -521,7 +544,7 @@ function Plotter (calculator, coords, hooks) {
 
         var latlon = coords[this.counter];
 
-        var c = calculator.calculate(latlon.lat, latlon.lon);
+        var c = calculator.calculate(date, latlon.lat, latlon.lon);
 
         if (typeof coords[this.counter - 1] !== 'undefined' && latlon.lat !== coords[this.counter - 1].lat) {
           hooks.jobLatitudeDone(this);
