@@ -1,6 +1,6 @@
-# moonailzer.js
+# moonalizer.js
 
-JS library for calculating first crescent visibility.
+JS library for calculating first crescent visibility accourding to Islamic month beginnings.
 
 ## Yallop
 
